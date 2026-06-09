@@ -5,7 +5,7 @@
 ## 运行
 
 ```powershell
-& "C:\Users\Chen\AppData\Local\Programs\Python\Python314\python.exe" .\main.py
+& "C:\Users\UserName\AppData\Local\Programs\Python\Python314\python.exe" .\main.py
 ```
 
 ## 打包
