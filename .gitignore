@@ -7,3 +7,5 @@ dist/
 .venv/
 venv/
 standing-reminder-source.zip
+assets/*.ico
+assets/*.png
