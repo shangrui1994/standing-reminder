@@ -33,7 +33,7 @@ INSTANCE_KEY = "StandingReminderTool.Chen.SingleInstance"
 DEFAULT_CONFIG = {
     "work_start": "09:00",
     "work_end": "18:00",
-    "interval_minutes": 3,
+    "interval_minutes": 60,
 }
 
 MESSAGES = [
@@ -406,7 +406,7 @@ class SettingsWindow(QMainWindow):
         end = QTime.fromString(config["work_end"], "HH:mm")
         self.start_edit.setTime(start if start.isValid() else QTime(9, 0))
         self.end_edit.setTime(end if end.isValid() else QTime(18, 0))
-        self.interval_spin.setValue(int(config.get("interval_minutes", 3)))
+        self.interval_spin.setValue(int(config.get("interval_minutes", DEFAULT_CONFIG["interval_minutes"])))
 
     def save(self) -> None:
         self.app.config = {
@@ -569,7 +569,7 @@ class StandingReminderApp:
     def tick(self) -> None:
         if self.popup.isVisible() or not self.is_work_time():
             return
-        interval = timedelta(minutes=int(self.config.get("interval_minutes", 3)))
+        interval = timedelta(minutes=int(self.config.get("interval_minutes", DEFAULT_CONFIG["interval_minutes"])))
         if datetime.now() - self.last_reminder_at >= interval:
             self.show_reminder_now()
 
