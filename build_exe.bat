@@ -6,16 +6,25 @@ pushd "%~dp0"
 set PYTHON=python
 
 "%PYTHON%" create_icon.py
+if errorlevel 1 goto :failed
 
-"%PYTHON%" -m PyInstaller ^
-  --noconsole ^
-  --onefile ^
-  --name StandingReminder ^
-  --icon "assets\app_icon.ico" ^
-  --add-data "assets;assets" ^
-  main.py
+if not exist "assets\standing_mascot.png" (
+  echo Missing required asset: assets\standing_mascot.png
+  goto :failed
+)
+
+"%PYTHON%" -m PyInstaller --noconfirm --clean StandingReminder.spec
+if errorlevel 1 goto :failed
 
 echo.
 echo Build finished. EXE path: dist\StandingReminder.exe
 popd
 pause
+exit /b 0
+
+:failed
+echo.
+echo Build failed.
+popd
+pause
+exit /b 1
