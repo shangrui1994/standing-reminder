@@ -1,7 +1,9 @@
 @echo off
 setlocal
 
-set PYTHON=C:\Users\Chen\AppData\Local\Programs\Python\Python314\python.exe
+pushd "%~dp0"
+
+set PYTHON=python
 
 "%PYTHON%" create_icon.py
 
@@ -15,4 +17,5 @@ set PYTHON=C:\Users\Chen\AppData\Local\Programs\Python\Python314\python.exe
 
 echo.
 echo Build finished. EXE path: dist\StandingReminder.exe
+popd
 pause
