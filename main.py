@@ -9,7 +9,7 @@ from PySide6.QtGui import QAction, QColor, QIcon, QPainter, QPixmap
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from PySide6.QtWidgets import QApplication, QMenu, QMessageBox, QStyle, QSystemTrayIcon
 
-from config import APP_NAME, INSTANCE_KEY, ReminderConfig, load_config, save_config
+from config import APP_NAME, INSTANCE_KEY, ReminderConfig, config_path, load_config, save_config
 from reminder import ReminderState
 from startup import is_auto_start_enabled, set_auto_start_enabled
 from widgets import ReminderPopup, SettingsWindow
@@ -45,6 +45,7 @@ class StandingReminderApp:
         self.qt_app.setQuitOnLastWindowClosed(False)
 
         self.server = self.create_single_instance_server()
+        self.show_settings_on_start = not config_path().exists()
         self.config = replace(load_config(), auto_start=is_auto_start_enabled())
         self.state = ReminderState.create()
 
@@ -137,7 +138,14 @@ class StandingReminderApp:
         self.schedule_next_check()
 
     def update_auto_start(self, enabled: bool) -> None:
-        set_auto_start_enabled(enabled)
+        try:
+            set_auto_start_enabled(enabled)
+        except OSError as exc:
+            self.config = replace(self.config, auto_start=is_auto_start_enabled())
+            save_config(self.config)
+            self.settings.set_auto_start_checked(self.config.auto_start)
+            QMessageBox.warning(self.settings, APP_NAME, f"开机自启动设置失败：{exc}")
+            return
         self.config = replace(self.config, auto_start=is_auto_start_enabled())
         save_config(self.config)
 
@@ -219,7 +227,8 @@ class StandingReminderApp:
         self.qt_app.quit()
 
     def run(self) -> int:
-        QTimer.singleShot(300, self.show_settings)
+        if self.show_settings_on_start:
+            QTimer.singleShot(300, self.show_settings)
         return self.qt_app.exec()
 
 

@@ -21,8 +21,8 @@ def current_launch_command() -> str:
 def is_auto_start_enabled() -> bool:
     try:
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, RUN_KEY) as key:
-            winreg.QueryValueEx(key, RUN_VALUE_NAME)
-            return True
+            value, _ = winreg.QueryValueEx(key, RUN_VALUE_NAME)
+            return value == current_launch_command()
     except FileNotFoundError:
         return False
     except OSError:

@@ -487,10 +487,13 @@ class SettingsWindow(QMainWindow):
         self.start_edit.setTime(start if start.isValid() else QTime(9, 0))
         self.end_edit.setTime(end if end.isValid() else QTime(18, 0))
         self.interval_spin.setValue(config.interval_minutes or DEFAULT_CONFIG.interval_minutes)
-        self.auto_start_check.blockSignals(True)
-        self.auto_start_check.setChecked(config.auto_start)
-        self.auto_start_check.blockSignals(False)
+        self.set_auto_start_checked(config.auto_start)
         self.refresh_status()
+
+    def set_auto_start_checked(self, enabled: bool) -> None:
+        self.auto_start_check.blockSignals(True)
+        self.auto_start_check.setChecked(enabled)
+        self.auto_start_check.blockSignals(False)
 
     def on_auto_start_toggled(self, enabled: bool) -> None:
         self.on_auto_start_changed(enabled)
